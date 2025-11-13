@@ -1,0 +1,6 @@
+{
+  "minimum_chrome_version": "114",
+  "web_accessible_resources": [
+    { "resources": ["offscreen.html"], "matches": ["<all_urls>"] }
+  ]
+}

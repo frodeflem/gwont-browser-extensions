@@ -1,0 +1,35 @@
+{
+	"name": "gwont-browser-extensions",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"clean": "rimraf dist",
+		"dev:chromium": "vite build --watch --mode=chromium",
+		"dev:firefox": "vite --mode=firefox",
+		"dev:safari": "vite --mode=safari",
+		"build": "npm run clean && vite build && node scripts/build.mjs",
+		"zip": "node scripts/zip.mts",
+		"fx:run": "web-ext run --source-dir dist/firefox --verbose"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"webextension-polyfill": "^0.12.0"
+	},
+	"devDependencies": {
+		"@types/archiver": "^7.0.0",
+		"@types/chrome": "^0.1.28",
+		"@types/firefox-webext-browser": "^143.0.0",
+		"@types/webextension-polyfill": "^0.12.4",
+		"archiver": "^7.0.1",
+		"esbuild": "^0.27.0",
+		"rimraf": "^6.1.0",
+		"rollup": "^4.53.2",
+		"typescript": "^5.9.3",
+		"vite": "^7.2.2",
+		"web-ext": "^9.1.0"
+	}
+}
