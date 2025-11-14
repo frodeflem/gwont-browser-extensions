@@ -1,6 +1,8 @@
 # Travian HTML Exporter Extension
 
-This Chrome browser extension captures the HTML source of Travian game pages and uploads it to a specified external API for data analysis. It offers functionality similar to the Travco extension but was originally developed to work with a specific API maintained by the author.
+This browser extension captures the HTML source of Travian game pages and uploads it to a specified external API for data analysis. It offers functionality similar to the Travco extension but was originally developed to work with a specific API maintained by the author.
+
+The extension currently supports Firefox and Chromium-based browsers.
 
 While the extension was not designed for use with third-party APIs, you are welcome to adapt it for your own backend.
 
