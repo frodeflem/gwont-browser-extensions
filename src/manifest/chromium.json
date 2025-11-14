@@ -4,6 +4,5 @@
 	"web_accessible_resources": [{ "resources": ["offscreen.html"], "matches": ["<all_urls>"] }],
 	"background": { "service_worker": "background/index.js", "type": "module" },
 	"action": { "default_title": "Send page source" },
-	"permissions": ["storage", "scripting", "activeTab", "notifications"],
-	"host_permissions": ["https://*/*"]
+	"permissions": ["storage", "scripting", "activeTab", "notifications"]
 }
