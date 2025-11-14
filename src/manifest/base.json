@@ -1,32 +1,16 @@
 {
-	"manifest_version": 3,
 	"name": "GWONT Browser Extension",
 	"version": "1.0.0",
-	"action": { "default_title": "Send page source" },
 	"options_ui": { "page": "ui/options/index.html", "open_in_tab": true },
-	"background": { "service_worker": "background/index.js", "type": "module" },
-	"permissions": ["storage", "scripting", "activeTab"],
-	"host_permissions": ["https://*/*"],
 	"icons": { "48": "icons/48.png" },
 	"commands": {
 		"reload_extension": {
 			"suggested_key": { "default": "Alt+Shift+R" },
 			"description": "Reload this extension"
 		},
-		"reload_content_here": {
-			"suggested_key": { "default": "Alt+Shift+C" },
-			"description": "Re-run the content script on the active tab"
-		},
 		"parse_page": {
 			"suggested_key": { "default": "Ctrl+Q" },
 			"description": "Parse the current page"
 		}
-	},
-	"content_scripts": [
-		{
-			"matches": ["https://*/*"],
-			"js": ["content/index.js"],
-			"run_at": "document_idle"
-		}
-	]
+	}
 }

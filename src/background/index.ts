@@ -2,30 +2,28 @@ import { browser } from "@/adapters/browser-api";
 import { withActiveTabDOM } from "@/adapters/document";
 import { AdminApi } from "@/core/api";
 
-console.log("GWONT: Extension loaded", chrome.runtime.getManifest().version, new Date().toLocaleString());
+const browserAction = (browser as any).action ?? (browser as any).browserAction;
 
-// async function triggerInTab(tabId: number, message: unknown) {
-// 	try {
-// 		return await browser.tabs.sendMessage(tabId, message);
-// 	} catch (err) {
-// 		await (browser as any).scripting.executeScript({
-// 			target: { tabId },
-// 			files: ["content/index.js"],
-// 		});
-// 		return await browser.tabs.sendMessage(tabId, message);
-// 	}
-// }
+if (!browserAction) {
+	console.error("No browser action API available");
+}
 
-// async function triggerActiveTab(payload: any) {
-// 	const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-// 	if (!tab?.id) return;
-// 	const res = await triggerInTab(tab.id, { type: "DO_SOMETHING", payload });
-// 	console.log("[bg] content replied:", res);
-// }
+console.log("GWONT: Extension loaded", browser.runtime.getManifest().version, new Date().toLocaleString());
 
 async function getActiveTabUrl(): Promise<string | null> {
 	const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
 	return tab?.url ?? null;
+}
+
+async function showErrorNotification(message: string) {
+	const id = `gwont-error-${Date.now()}`;
+
+	await browser.notifications.create(id, {
+		type: "basic",
+		iconUrl: "icons/48.png", // already in your manifest
+		title: "GWONT – Error",
+		message,
+	});
 }
 
 async function parseActiveTab(tab: browser.Tabs.Tab) {
@@ -40,18 +38,37 @@ async function parseActiveTab(tab: browser.Tabs.Tab) {
 	const { apiKey } = await browser.storage.local.get(["apiKey"]);
 	if (!apiKey) return browser.runtime.openOptionsPage();
 
-	await browser.action.setBadgeText({ text: "..." });
-	const { avatarName, html } = await withActiveTabDOM(() => {
-		const element = document.querySelector("#sidebarBoxActiveVillage .content .playerName");
-		const avatarName = element?.textContent?.trim() ?? null;
-		const html = document.documentElement.outerHTML;
-		return { avatarName, html };
-	});
-	if (!avatarName) throw new Error("Avatar name not found.");
-	await AdminApi.parsePage(url, avatarName, html);
-	await browser.action.setBadgeText({ text: "✔️" });
+	try {
+		await browserAction.setBadgeText({ text: "..." });
 
-	setTimeout(() => browser.action.setBadgeText({ text: "" }), 3000);
+		const { avatarName, html } = await withActiveTabDOM(() => {
+			const element = document.querySelector("#sidebarBoxActiveVillage .content .playerName");
+			const avatarName = element?.textContent?.trim() ?? null;
+			const html = document.documentElement.outerHTML;
+			return { avatarName, html };
+		});
+		if (!avatarName) throw new Error("Avatar name not found on page.");
+
+		await AdminApi.parsePage(url, avatarName, html);
+		await browserAction.setBadgeText({ text: "✔️" });
+	} catch (error) {
+		console.error("GWONT: Failed to parse page", error);
+
+		const e = error as Error & { status?: number };
+		let message = "Failed to parse the page.";
+
+		if (e.status === 400) {
+			// backend rejected the page / validation failure
+			message = e.message || "Server rejected this page (400).";
+		} else if (e.message) {
+			message = e.message;
+		}
+
+		await browserAction.setBadgeText({ text: "!" });
+		await showErrorNotification(message);
+	}
+
+	setTimeout(() => browserAction.setBadgeText({ text: "" }), 3000);
 }
 
 browser.commands.onCommand.addListener(async (command) => {
@@ -63,4 +80,10 @@ browser.commands.onCommand.addListener(async (command) => {
 		if (!tab?.id) return;
 		await parseActiveTab(tab);
 	}
+});
+
+browserAction.onClicked.addListener(async () => {
+	const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+	if (!tab?.id) return;
+	await parseActiveTab(tab);
 });

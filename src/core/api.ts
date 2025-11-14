@@ -110,8 +110,9 @@ export class AdminApi {
 	}
 
 	static async parsePage(url: string, avatarName: string, body: string) {
-		const safeUrl = url.replaceAll("&", "%26");
-		return this.fetch(`${EXPORT_ENDPOINT}?avatar_name=${avatarName}&url=${safeUrl}`, { method: "POST", body });
+		const safeAvatar = encodeURIComponent(avatarName);
+		const safeUrl = encodeURIComponent(url);
+		return this.fetch(`${EXPORT_ENDPOINT}?avatar_name=${safeAvatar}&url=${safeUrl}`, { method: "POST", body });
 	}
 }
 

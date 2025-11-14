@@ -9,35 +9,23 @@ export default defineConfig(({ mode }) => {
 	const root = resolve(__dirname, "src");
 
 	return {
-		root, // <-- make src the root
+		root,
 		resolve: {
-			alias: { "@": root }, // "@/..." -> "src/..."
+			alias: { "@": root },
 		},
 		build: {
 			outDir: resolve(__dirname, "dist/common"),
 			emptyOutDir: !isDev,
 			target: "es2022",
-			sourcemap: isDev, // ✅ helpful during dev
-			minify: isDev ? false : "esbuild", // ✅ no minify in dev
+			sourcemap: isDev,
+			minify: isDev ? false : "esbuild",
 			rollupOptions: {
 				input: {
-					// HTML entries (paths are now relative to `root`)
-					popup: resolve(root, "ui/popup/index.html"),
 					options: resolve(root, "ui/options/index.html"),
-
-					// Script entries
 					background: resolve(root, "background/index.ts"),
-					content: resolve(root, "content/main.ts"),
 				},
 				output: {
-					entryFileNames: (chunk) =>
-						chunk.name === "background"
-							? "background/index.js"
-							: chunk.name === "content"
-							? "content/index.js"
-							: chunk.name === "offscreenScript"
-							? "offscreen/index.js"
-							: "assets/[name].js",
+					entryFileNames: (chunk) => (chunk.name === "background" ? "background/index.js" : chunk.name === "offscreenScript" ? "offscreen/index.js" : "assets/[name].js"),
 					assetFileNames: (asset) => {
 						// keep CSS next to its importer folder if desired
 						if (asset.name?.endsWith(".css")) return "[name][extname]";
@@ -52,7 +40,7 @@ export default defineConfig(({ mode }) => {
 		},
 		publicDir: resolve(__dirname, "public"), // keep using /public for icons etc.
 
-		// ✨ watch build done to auto-copy into dist/chromium
+		// watch build done to auto-copy into dist/chromium
 		plugins: [
 			{
 				name: "copy-to-chromium",
