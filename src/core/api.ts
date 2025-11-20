@@ -100,11 +100,13 @@ export class AdminApi {
 			throw new Error("Failed to refresh access token");
 		}
 
-		const { apiKey } = await browser.storage.local.get(["apiKey"]);
-		if (apiKey) {
-			await PublicApi.loginWithApiKey(apiKey as string);
+		// const { apiKey } = await browser.storage.local.get(["apiKey"]);
+		const { username, password } = await browser.storage.local.get(["username", "password"]);
+		if (username && password) {
+			// await PublicApi.loginWithApiKey(apiKey as string);
+			await PublicApi.login(username as string, password as string);
 			if (isTokenValid(accessToken)) return accessTokenString;
-			throw new Error("Failed to login with API key");
+			throw new Error("Failed to login");
 		}
 		return null;
 	}

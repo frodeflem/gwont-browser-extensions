@@ -3,11 +3,16 @@ const $ = (id: string): HTMLElement | null => document.getElementById(id);
 
 // Load current prefs when the page opens
 (async () => {
-	const { apiKey = "" } = await chrome.storage.local.get(["apiKey"]);
-	const apiKeyInput = $("apiKey") as HTMLInputElement;
+	const { username = "", password = "" } = await chrome.storage.local.get(["username", "password"]);
+	const usernameInput = $("username") as HTMLInputElement;
+	const passwordInput = $("password") as HTMLInputElement;
 
-	if (apiKeyInput) {
-		apiKeyInput.value = apiKey;
+	if (usernameInput) {
+		usernameInput.value = username;
+	}
+
+	if (passwordInput) {
+		passwordInput.value = password;
 	}
 })();
 
@@ -15,12 +20,14 @@ const $ = (id: string): HTMLElement | null => document.getElementById(id);
 const saveButton = $("save") as HTMLButtonElement;
 if (saveButton) {
 	saveButton.addEventListener("click", async () => {
-		const apiKeyInput = $("apiKey") as HTMLInputElement;
+		const usernameInput = $("username") as HTMLInputElement;
+		const passwordInput = $("password") as HTMLInputElement;
 		const statusElement = $("status") as HTMLElement;
 
-		if (apiKeyInput) {
+		if (usernameInput && passwordInput) {
 			await chrome.storage.local.set({
-				apiKey: apiKeyInput.value.trim(),
+				username: usernameInput.value.trim(),
+				password: passwordInput.value.trim(),
 			});
 		}
 

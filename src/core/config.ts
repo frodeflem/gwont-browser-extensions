@@ -1,4 +1,4 @@
-export const API_HOST = "https://api.gwont.com";
+export const API_HOST = "https://api.flemel.no";
 
 // Endpoints
 export const LOGIN_ENDPOINT = "/login";

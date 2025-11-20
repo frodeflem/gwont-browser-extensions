@@ -35,8 +35,9 @@ async function parseActiveTab(tab: browser.Tabs.Tab) {
 
 	console.log("GWONT: Parsing Travian page:", url);
 
-	const { apiKey } = await browser.storage.local.get(["apiKey"]);
-	if (!apiKey) return browser.runtime.openOptionsPage();
+	// const { apiKey } = await browser.storage.local.get(["apiKey"]);
+	const { username, password } = await browser.storage.local.get(["username", "password"]);
+	if (!username || !password) return browser.runtime.openOptionsPage();
 
 	try {
 		await browserAction.setBadgeText({ text: "..." });

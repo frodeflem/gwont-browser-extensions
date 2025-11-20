@@ -1,8 +1,8 @@
 {
-	"name": "GWONT Browser Extension",
+	"name": "Flemel Browser Extension",
 	"version": "1.0.0",
 	"options_ui": { "page": "ui/options/index.html", "open_in_tab": true },
-	"icons": { "48": "icons/48.png" },
+	"icons": { "48": "icons/48-F.png" },
 	"commands": {
 		"reload_extension": {
 			"suggested_key": { "default": "Alt+Shift+R" },
